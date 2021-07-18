@@ -97,20 +97,7 @@ plt.show()
 plt.gcf().set_tight_layout(True)
 
 
-# draw trend arrows
-def draw_arrow(ax, label, x0, y0, rotation, size, direction):
-    style = direction + 'arrow'
-    bbox_props = dict(boxstyle=style, fc=(0.8, 0.9, 0.9), ec="b", lw=1)
-    t = ax.text(x0, y0, label, ha="left", va="bottom", rotation=rotation,
-                size=size, bbox=bbox_props, zorder=-1)
 
-    bb = t.get_bbox_patch()
-    bb.set_boxstyle(style, pad=0.6)
-
-
-ax = plt.gca()
-draw_arrow(ax, 'Irradiance', 20, 2.5, 90, 15, 'r')
-draw_arrow(ax, 'Temperature', 35, 1, 0, 15, 'l')
 
 print(pd.DataFrame({
     'i_sc': curve_info['i_sc'],
