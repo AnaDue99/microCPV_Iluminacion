@@ -144,7 +144,7 @@ caracteristics_ETSIDI_winter={
     }
 
 caracteristics_module={
-    'tilt':90,
+    'tilt':30,
     'surface_azimuth':180,   
     'alpha_sc':0.0046,
     'a_ref':2.63,
