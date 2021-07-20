@@ -41,7 +41,7 @@ def get_recurso(lat,lon,tz,date,tilt,surface_azimuth):
         solar_zenith=solar_position['apparent_zenith'],
         solar_azimuth=solar_position['azimuth'])
     
-    print(total_irrad['poa_direct'])
+    
     return pd.DataFrame({'POA': total_irrad['poa_global'],
                          'POA_diffuse': total_irrad['poa_diffuse'],
                          'POA_direct':total_irrad['poa_direct']})
@@ -69,6 +69,7 @@ def get_pot(poa_direct,temp,alpha_sc,a_ref,I_L_ref,I_o_ref,R_sh_ref,R_s):
         ivcurve_pnts=50,
         method='lambertw'
     )
+    
     return curve_info
 
 
@@ -118,6 +119,12 @@ def dibujar_curvas(summer,winter):
     plt.title('CURVA IV MODULO a las 12 am')
     plt.show()
     plt.gcf().set_tight_layout(True)
+    
+    data={'Summer':[summer['i_sc'],summer['v_oc'],summer['i_mp'],summer['v_mp'],summer['p_mp']],
+          'Winter':[winter['i_sc'],winter['v_oc'],winter['i_mp'],winter['v_mp'],winter['p_mp']]}
+    
+    table=pd.DataFrame(data, index=['i_sc','v_oc','i_mp','v_mp','p_mp'])
+    print(table)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""DEF CARACTERISTICAS"""""""""""""""""""""""""""""""""""""""""""""
 caracteristics_ETSIDI_summer={
@@ -137,7 +144,7 @@ caracteristics_ETSIDI_winter={
     }
 
 caracteristics_module={
-    'tilt':30,
+    'tilt':90,
     'surface_azimuth':180,   
     'alpha_sc':0.0046,
     'a_ref':2.63,
@@ -155,7 +162,7 @@ summer_recurso_ETSIDI=get_recurso(caracteristics_ETSIDI_summer['lat'],
                                   caracteristics_ETSIDI_summer['date'],
                                   caracteristics_module['tilt'],
                                   caracteristics_module['surface_azimuth'])
-"recurso_12_am_summer=summer_recurso_ETSIDI.loc[['2020-06-21 12:00:00-02:00'],['POA_direct']] "
+#recurso_12_am_summer=summer_recurso_ETSIDI.loc[['2020-06-21 12:00:00-02:00'],['POA_direct']] 
 recurso_12_am_summer=717.831                          
 "Seleccionamos solo el recurso disponible a las 12 am"
 summer_potencia_ETSIDI=get_pot(recurso_12_am_summer, 
@@ -174,9 +181,11 @@ winter_recurso_ETSIDI=get_recurso(caracteristics_ETSIDI_winter['lat'],
                                   caracteristics_ETSIDI_winter['date'],
                                   caracteristics_module['tilt'],
                                   caracteristics_module['surface_azimuth'])
-                                 
+
+         
+                 
 "Seleccionamos solo el recurso disponible a las 12 am"
-"recurso_12_am_winter=winter_recurso_ETSIDI.loc[['2020-12-21 12:00:00-02:00'],['POA_direct']]"
+#recurso_12_am_winter=winter_recurso_ETSIDI.loc[['2020-12-21 12:00:00-02:00'],['POA_direct']]
 recurso_12_am_winter=520.15
 winter_potencia_ETSIDI=get_pot(recurso_12_am_winter, 
                                 caracteristics_ETSIDI_winter['temp'],
