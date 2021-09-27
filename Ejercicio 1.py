@@ -110,32 +110,16 @@ def get_r(AOI,focal_dist):
     r=-r
     return r
 
-def get_x(_r,DifAzimuths):
-    x=_r*m.cos(DifAzimuths*m.pi/180)
-    return x
-def get_y(_r,DifAzimuths):
-    y=_r*m.sin(DifAzimuths*m.pi/180)
-    return y
-
 R=[]
-X=[]
-Y=[]
 
 for i in AOI:
     R.append(get_r(i,caracteristics_module['focal_distance']))
 
-[float(i) for i in R]
-
-for i in range(len(R)):
-    X.append(get_x(R[i],DifAzimuths[i]))
-    Y.append(get_y(R[i],DifAzimuths[i]))
-
-    
+   
 
     
 plt.plot(AOI,R,label='R')
-"plt.plot(AOI,X,label='X')"
-"plt.plot(AOI,Y,label='Y')"
+
 plt.legend(loc=(1.0, 0))
 plt.xlabel('AOI (º)')
 plt.ylabel('R (mm)')
