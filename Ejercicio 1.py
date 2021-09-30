@@ -20,8 +20,8 @@ caracteristics_module={
     'surface_azimuth':180,
     'focal_distance': 5,
     'tam_module':7,
-    'radius_multijunction':2,
-    'radius_spot':2.1
+    'radius_multijunction':3,
+    'radius_spot':3.001
     }
 
 caracteristics_ETSIDI_summer={
@@ -183,8 +183,12 @@ for i in range(len(R)):
 for i in range(len(light)):
     light_spot[i]=light_spot[i]+total_irrad['poa_diffuse'][i]
 
-plt.plot(AOI, match_surface,label='area coincidente')
+
 plt.plot(AOI, electric_efficiency,label='eficiencia generación electrica')
+plt.xlabel('AOI [º]')
+plt.ylabel(' EFICIENCIA ELÉCTRICA [%1]')
+plt.title('Eficiencia en tanto por 1')
+
 plt.show()
 
 plt.plot(AOI,light_spot, label='Light Irradiance')
