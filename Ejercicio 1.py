@@ -24,20 +24,20 @@ caracteristics_module={
     'radius_spot':3.001
     }
 
-caracteristics_ETSIDI_summer={
+caracteristics={
     'lat':40.405655,
-    'lon':-3.700292,
+    'lon':-3.647649,
     'tz':'Etc/GMT+2',
     'date':'21-06-2020',
     'temp':60
     }
 
 "Creamos objeto con la localización"
-site = location.Location(caracteristics_ETSIDI_summer['lat'], 
-                         caracteristics_ETSIDI_summer['lon'],
-                        caracteristics_ETSIDI_summer['tz'])
+site = location.Location(caracteristics['lat'], 
+                         caracteristics['lon'],
+                        caracteristics['tz'])
                                                       
-times = pd.date_range(caracteristics_ETSIDI_summer['date'], freq='10min', periods=6*24,
+times = pd.date_range(caracteristics['date'], freq='10min', periods=6*24,
                       tz=site.tz)
 clearsky = site.get_clearsky(times)
 solar_position = site.get_solarposition(times)
@@ -64,6 +64,7 @@ AOI=irradiance.aoi( caracteristics_module['tilt'],
 
 min_AOI=min(AOI)
 max_AOI=max(AOI)
+
 
 def get_max_aoi(tam_module,focal_dist):
     MAX_AOI=m.atan(tam_module/focal_dist)*180/m.pi
@@ -184,6 +185,10 @@ for i in range(len(light)):
     light_spot[i]=light_spot[i]+total_irrad['poa_diffuse'][i]
 
 
+Results_spot=pd.DataFrame({'Iluminación': light_spot,
+                         'Electricidad': electricity_spot,
+                         'Total':total_irrad['poa_global']})
+
 plt.plot(AOI, electric_efficiency,label='eficiencia generación electrica')
 plt.xlabel('AOI [º]')
 plt.ylabel(' EFICIENCIA ELÉCTRICA [%1]')
@@ -203,20 +208,21 @@ plt.show()
 plt.gcf().set_tight_layout(True)
 
 
-"""
-if abs(R[i]) > caracteristics_module['radius_spot']+caracteristics_module['radius_multijunction']:
-        light_spot.append(total_irrad['poa_direct'][i])
-        electricity_spot.append(0)
-    
-   elif abs(R[i])< caracteristics_module['radius_multijunction']:
-        electric_efficiency_=caracteristics_module['radius_multijunction']/caracteristics_module['radius_spot']
-        light_spot.append(total_irrad['poa_direct'][i]*(1-electric_efficiency_))
-        electricity_spot.append(total_irrad['poa_direct'][i]*electric_efficiency_)
-    
-   else:
-        match_surface.append(intersection(f,R[i],caracteristics_module['radius_spot'],caracteristics_module['radius_multijunction']))
-        electric_efficiency=abs(match_surface[sur]/(m.pi*(caracteristics_module['radius_spot'])**2))
-        sur=sur+1
-        light_spot.append(total_irrad['poa_direct'][i]*(1-electric_efficiency))
-        electricity_spot.append(total_irrad['poa_direct'][i]*electric_efficiency)
-        """
+
+Results_spot.index = Results_spot.index.strftime("%H:%M")
+
+Results_spot['Iluminación'].plot(label='Irradiancia para iluminación')
+Results_spot['Electricidad'].plot( label='Irradiancia para electricidad')
+Results_spot['Total'].plot( label='Irradiancia disponible total')
+
+plt.legend(loc=(0.5, 0))
+plt.xlabel('Hora del día')
+plt.ylabel('Irradiance [W/m2]')
+plt.title("Muesta irradiancias a lo largo del día de una lente TENIENDO EN CUENTA EL SPOT")
+
+plt.show()
+
+
+
+
+
