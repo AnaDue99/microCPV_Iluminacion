@@ -37,15 +37,30 @@ def read_aoi_data():
     Deg50.set_index('NaN',inplace=True)
     Deg55.set_index('NaN',inplace=True)
     Deg60.set_index('NaN',inplace=True)
+   
+    #Se ha preferido trabajar con matrices aunque no descarto intentarlo con dataframe luego
+    deg0=Deg0.to_numpy()
+    deg5=Deg5.to_numpy()
+    deg10=Deg10.to_numpy()
+    deg15=Deg15.to_numpy()
+    deg20=Deg20.to_numpy()
+    deg25=Deg25.to_numpy()
+    deg30=Deg30.to_numpy()
+    deg35=Deg35.to_numpy()
+    deg40=Deg40.to_numpy()
+    deg45=Deg45.to_numpy()
+    deg50=Deg50.to_numpy()
+    deg55=Deg55.to_numpy()
+    deg60=Deg60.to_numpy()
+    
+    return  deg0, deg5,deg10, deg15,deg20,deg25,deg30,deg35,deg40,deg45,deg50,deg55,deg60
 
-    return  Deg0, Deg5,Deg10, Deg15,Deg20,Deg25,Deg30,Deg35,Deg40,Deg45,Deg50,Deg55,Deg60
-
-#Interpolación lineal
+#Interpolación lineal-> no funciona tengo que encontrar otro método
 def linear_interpolation(x,xa,xb,ya,yb):
     y=ya+(x-xa)*(yb-ya)/(xb-xa)
     return y                        
 
-    
+ 
 def area_spot(aoi):
     Deg0,Deg5, Deg10,Deg15,Deg20,Deg25,Deg30,Deg35,Deg40,Deg45,Deg50,Deg55,Deg60 = read_aoi_data()
     if aoi>0 and aoi <5:
@@ -65,13 +80,18 @@ def area_spot(aoi):
     elif aoi<40:
         aoi_distribution=linear_interpolation(aoi,35,40,Deg35,Deg40)
     elif aoi<45:
-        aoi_distribution=linear_interpolation(aoi,45,50,Deg45,Deg50)
+        aoi_distribution=linear_interpolation(aoi,40,45,Deg40,Deg45)
     elif aoi<50:
+        aoi_distribution=linear_interpolation(aoi,45,50,Deg45,Deg50)
+    elif aoi<55:
         aoi_distribution=linear_interpolation(aoi,50,55,Deg50,Deg55)
-    elif aoi<15:
+    elif aoi<60:
         aoi_distribution=linear_interpolation(aoi,55,60,Deg55,Deg60)
     else:
         print("AOI FUERA DE ESTUDIO")
+    
+ 
+
     return aoi_distribution
         
 def plot_aoi_data(aoi_distribution):
@@ -80,4 +100,15 @@ def plot_aoi_data(aoi_distribution):
         sns.heatmap(aoi_distribution,vmin=0,  vmax=0.00004, square=True,  cmap="YlGnBu_r")
         plt.show()   
    
+def calcular_area(deg): #ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PARA APROXIMAR??? PA QUE APROXIMAS???
+    for i in range(len(deg[0])):
+        for j in range(len(deg[0])):
+            if deg[i,j]>0.00004:  #A LO MEJOR QUITAR ESTO
+                deg[i,j]=1
+                
+            elif deg[i,j]<0.00004: #Y DEJAR ESTO PARA NO TENER PROBLEMAS??? 
+                deg[i,j]=0
+    return deg
 
+
+                
