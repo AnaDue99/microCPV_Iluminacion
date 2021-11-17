@@ -7,6 +7,7 @@ This is a temporary script file.
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 def read_aoi_data():
     #Leemos del CSV los datos
@@ -23,6 +24,7 @@ def read_aoi_data():
     Deg50 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_50deg\OptiMesh_50deg.csv")   
     Deg55 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_55deg\OptiMesh_55deg.csv") 
     Deg60 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_60deg\OptiMesh_60deg.csv")
+    
     #Pasamos la columna NaN a indice. 
     Deg0.set_index('NaN',inplace=True)
     Deg5.set_index('NaN',inplace=True)
@@ -94,12 +96,69 @@ def area_spot(aoi):
 
     return aoi_distribution
         
-def plot_aoi_data(aoi_distribution):
+def plot_data_grid(aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
         sns.heatmap(aoi_distribution,vmin=0,  vmax=0.00004, square=True,  cmap="YlGnBu_r")
         plt.show()   
    
+
+
+#INTENTAR HACER UNA FUNCION TANTO PARA RECTANGULAR COMO PARA CIRCULAR
+def definir_area_celula_rectanular(l1,l2,desx,desy,precision=0.04):
+    area=np.empty((501, 501),float)
+    #han de ser valores como con mucho 0,04 mm de precision 
+    l1=l1/precision
+    l2=l2/precision
+    if desx<0:
+        x=desx/precision
+    else:
+        x=desx/precision 
+    if desy<0:
+        y=-desy/precision
+    else:
+        y=desy/precision 
+    for i in range(round(250-l1/2),round(250+l1/2),1):
+        for j in range(round(250-l2/2),round(250+l2/2),1):
+            area[int(i+x),int(j+y)]=1
+    return area
+
+def definir_area_celula_circular(r,desx,desy,precision=0.04):#Lo he aproximado a un cuadrado no me gusta
+    area=np.empty((501, 501),float)
+    #han de ser valores como con mucho 0,04 mm de precision 
+    r=r/precision
+    
+    if desx<0:
+        x=desx/precision
+    else:
+        x=desx/precision 
+    if desy<0:
+        y=-desy/precision
+    else:
+        y=desy/precision 
+    
+    for i in range(round(250-r),round(250+r),1):
+        for j in range(round(250-r),round(250+r),1):
+            area[int(i+x),int(j+y)]=1
+    return area
+
+def calculo_diferencia_areas(area_spot,area_celula):
+    area_iluminacion=np.empty((501, 501),float)
+    area_electricidad=np.empty((501, 501),float)
+    
+    for i in range(len(area_spot[0])):
+        for j in range(len(area_spot[0])):
+            if area_spot[i,j]>0 and area_celula[i,j]==1:  
+                area_electricidad[i,j]=area_spot[i,j]
+            elif area_spot[i,j]>0 and area_celula[i,j]==0:
+                area_iluminacion[i,j]=area_spot[i,j]
+    
+    
+    return area_iluminacion, area_electricidad
+
+
+
+
 def calcular_area(deg): #ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PARA APROXIMAR??? PA QUE APROXIMAS???
     for i in range(len(deg[0])):
         for j in range(len(deg[0])):
@@ -109,6 +168,3 @@ def calcular_area(deg): #ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PA
             elif deg[i,j]<0.00004: #Y DEJAR ESTO PARA NO TENER PROBLEMAS??? 
                 deg[i,j]=0
     return deg
-
-
-                

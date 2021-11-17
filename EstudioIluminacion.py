@@ -16,42 +16,25 @@ deg0,deg5, deg10,deg15,deg20,deg25,deg30,deg35,deg40,deg45,deg50,deg55,deg60 = f
 aoi_distribution=f.area_spot(11)
 
 
-f.plot_aoi_data(deg10)
-f.plot_aoi_data(deg15)
-f.plot_aoi_data(aoi_distribution)
+f.plot_data_grid(deg0)
+f.plot_data_grid(deg15)
 
-deg50=f.calcular_area(deg50)            
-            
+f.plot_data_grid(aoi_distribution)
+area_celula=f.definir_area_celula_rectanular(1,2,0,0,0.04)       
+f.plot_data_grid(area_celula)
+area_ilum,area_electricidad=f.calculo_diferencia_areas(deg0,area_celula)
+f.plot_data_grid(area_ilum)
+f.plot_data_grid(area_electricidad)
 
-#plt.plot(perimetro_[0],perimetro_[1])
-f.plot_aoi_data(deg50)           
-area=np.empty(501, 501)   #COMPROBAR ESTO COMO SE HACE
 
-#han de ser valores como con mucho 0,04 mm de precision 
-posx=-0.04
-posy=0.08
-l1=0.36
-l2=0.32
-if posx<0:
-        x=250-posx/20*500
-else:
-    x=250+posx/20*500 
-if posy<0:
-    y=250-posy/20*500
-else:
-    y=250+posy/20*500 
-l1=l1/20*500
-l2=l2/20*500    
 
-for i in range(0,500,1):
-    for j in range(0,500,1):
-        area[i,j]=0
+
+
+    
+    
+
         
-for i in range(round(-l1/2),round(l1/2),1):
-    for j in range(round(-l2/2),round(l2/2),1):
-        area[i+posx,j+posy]=1
-        
-        
+
             
     
 
