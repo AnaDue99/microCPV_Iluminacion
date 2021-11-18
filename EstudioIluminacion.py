@@ -26,7 +26,11 @@ area_ilum,area_electricidad=f.calculo_diferencia_areas(deg0,area_celula)
 f.plot_data_grid(area_ilum)
 f.plot_data_grid(area_electricidad)
 
-
+area_celula_=f.definir_area_celula_circular(1,0,-2,0.04)       
+f.plot_data_grid(area_celula_)
+area_ilum,area_electricidad=f.calculo_diferencia_areas(deg30,area_celula_)
+f.plot_data_grid(area_ilum)
+f.plot_data_grid(area_electricidad)
 
 
 

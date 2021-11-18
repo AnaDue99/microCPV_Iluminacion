@@ -137,9 +137,13 @@ def definir_area_celula_circular(r,desx,desy,precision=0.04):#Lo he aproximado a
     else:
         y=desy/precision 
     
-    for i in range(round(250-r),round(250+r),1):
-        for j in range(round(250-r),round(250+r),1):
-            area[int(i+x),int(j+y)]=1
+    for i in range(len(area[0])):
+        for j in range(len(area[0])):
+            if i**2+j**2 <= r**2 :
+                area[int(i+x+250),int(j+y+250)]=1
+                area[int(-i+x+250),int(j+y+250)]=1
+                area[int(i+x+250),int(-j+y+250)]=1
+                area[int(-i+x+250),int(-j+y+250)]=1
     return area
 
 def calculo_diferencia_areas(area_spot,area_celula):
@@ -158,8 +162,8 @@ def calculo_diferencia_areas(area_spot,area_celula):
 
 
 
-
-def calcular_area(deg): #ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PARA APROXIMAR??? PA QUE APROXIMAS???
+#ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PARA APROXIMAR??? PA QUE APROXIMAS???
+def calcular_area(deg): 
     for i in range(len(deg[0])):
         for j in range(len(deg[0])):
             if deg[i,j]>0.00004:  #A LO MEJOR QUITAR ESTO
