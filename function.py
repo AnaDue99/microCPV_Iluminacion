@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+
+#FUNCION PARA LEER LOS DATOS DEL FICHERO
 def read_aoi_data():
     #Leemos del CSV los datos
     Deg0 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_0deg\OptiMesh_0deg.csv")   
@@ -59,36 +61,121 @@ def read_aoi_data():
 
 #Interpolación lineal-> no funciona tengo que encontrar otro método
 def linear_interpolation(x,xa,xb,ya,yb):
+    #x: valor AOI requiero, xa y xb valore que se tienen. 
+    #ya yb son las matrices de los aoi que se tienen
     y=ya+(x-xa)*(yb-ya)/(xb-xa)
     return y                        
 
- 
+def linear_interpolation_tuple(x,xa,xb,ya,yb):
+    #x: valor AOI requiero, xa y xb valore que se tienen. 
+    #ya yb son las matrices de los aoi que se tienen
+    p=ya+(x-xa)*(yb-ya)/(xb-xa)  
+    return p     
+
+def calculo_centro_interpol(x,xa,xb,aoi1,aoi2): 
+    ##CALCULAMOS EL PUNTO P3 CENTRO MÁXIMO DEL NUEVO AOI
+    max_1=0
+    for i in range(len(aoi1[0])):
+        for j in range(len(aoi1[0])):
+            if aoi1[i,j]>max_1:
+                max_1=aoi1[i,j]
+                p1=np.array([i,j])
+    max_2=0           
+    for i in range(len(aoi2[0])):
+        for j in range(len(aoi2[0])):
+            if aoi2[i,j]>max_2:
+                max_2=aoi2[i,j]
+                p2=np.array([i,j])
+    
+    p3=linear_interpolation_tuple(x, xa, xb, p1, p2)
+    ##Creamos la matriz interpolada:
+    desp1=p3-p1
+    desp2=p3-p2
+    
+    aoi3=np.empty((501, 501),float)
+    aoi4=np.empty((501, 501),float)
+    for i in range(len(aoi3[0])):
+        for j in range(len(aoi3[0])):
+            
+            desp1_0=int(i-desp1[0])
+            desp1_1=int(j-desp1[1])
+            desp2_0=int(i-desp2[0])
+            desp2_1=int(j-desp2[1])
+           
+            if desp1_0 < 501 and desp1_1 < 501 and desp1_0 > 0 and desp1_1 > 0: 
+                aoi3[i,j]+=aoi1[desp1_0,desp1_1]
+           
+            if  desp2_0 < 501 and desp2_1 < 501  and desp2_0 > 0 and desp2_1 > 0:
+                aoi4[i,j]+=aoi2[desp2_0,desp2_1]
+
+    aoi_pedido=linear_interpolation_tuple(x, xa, xb, aoi3, aoi4)
+    return aoi_pedido
+    
 def area_spot(aoi):
     Deg0,Deg5, Deg10,Deg15,Deg20,Deg25,Deg30,Deg35,Deg40,Deg45,Deg50,Deg55,Deg60 = read_aoi_data()
-    if aoi>0 and aoi <5:
-        aoi_distribution=linear_interpolation(aoi,0,5,Deg0,Deg5)
+    if aoi>=0 and aoi <5:
+        if aoi==0:
+            aoi_distribution=Deg0
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,0,5,Deg0,Deg5)
     elif aoi<10:
-        aoi_distribution=linear_interpolation(aoi,5,10,Deg5,Deg10)
+        if aoi==5:
+            aoi_distribution=Deg5
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,5,10,Deg5,Deg10)
     elif aoi<15:
-        aoi_distribution=linear_interpolation(aoi,10,15,Deg10,Deg15)
+        if aoi==10:
+            aoi_distribution=Deg10
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,10,15,Deg10,Deg15)
     elif aoi<20:
-        aoi_distribution=linear_interpolation(aoi,15,20,Deg15,Deg20)
+        if aoi==15:
+            aoi_distribution=Deg15
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,15,20,Deg15,Deg20)
     elif aoi<25:
-        aoi_distribution=linear_interpolation(aoi,20,25,Deg20,Deg25)
+        if aoi==20:
+            aoi_distribution=Deg20
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,20,25,Deg20,Deg25)
     elif aoi<30:
-        aoi_distribution=linear_interpolation(aoi,25,30,Deg25,Deg30)
+        if aoi==25:
+            aoi_distribution=Deg25
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,25,30,Deg25,Deg30)
     elif aoi<35:
-        aoi_distribution=linear_interpolation(aoi,30,35,Deg30,Deg35)
+        if aoi==30:
+            aoi_distribution=Deg30
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,30,35,Deg30,Deg35)
     elif aoi<40:
-        aoi_distribution=linear_interpolation(aoi,35,40,Deg35,Deg40)
+        if aoi==35:
+            aoi_distribution=Deg35
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,35,40,Deg35,Deg40)
     elif aoi<45:
-        aoi_distribution=linear_interpolation(aoi,40,45,Deg40,Deg45)
+        if aoi==40:
+            aoi_distribution=Deg40
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,40,45,Deg40,Deg45)
     elif aoi<50:
-        aoi_distribution=linear_interpolation(aoi,45,50,Deg45,Deg50)
+        if aoi==45:
+            aoi_distribution=Deg45
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,45,50,Deg45,Deg50)
     elif aoi<55:
-        aoi_distribution=linear_interpolation(aoi,50,55,Deg50,Deg55)
+        if aoi==50:
+            aoi_distribution=Deg50
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,50,55,Deg50,Deg55)
     elif aoi<60:
-        aoi_distribution=linear_interpolation(aoi,55,60,Deg55,Deg60)
+        if aoi==55:
+            aoi_distribution=Deg55
+        else:
+            aoi_distribution=calculo_centro_interpol(aoi,55,60,Deg55,Deg60)
+    elif aoi==60:
+        aoi_distribution=Deg60
+        
     else:
         print("AOI FUERA DE ESTUDIO")
     
@@ -96,10 +183,11 @@ def area_spot(aoi):
 
     return aoi_distribution
         
-def plot_data_grid(aoi_distribution):
+def plot_data_grid(aoi,aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
         sns.heatmap(aoi_distribution,vmin=0,  vmax=0.00004, square=True,  cmap="YlGnBu_r")
+        plt.title(aoi)
         plt.show()   
    
 
@@ -160,15 +248,3 @@ def calculo_diferencia_areas(area_spot,area_celula):
     
     return area_iluminacion, area_electricidad
 
-
-
-#ESTO REALMENTE PARA QUE SIRVE ????? PARA NADA??? NO? PARA APROXIMAR??? PA QUE APROXIMAS???
-def calcular_area(deg): 
-    for i in range(len(deg[0])):
-        for j in range(len(deg[0])):
-            if deg[i,j]>0.00004:  #A LO MEJOR QUITAR ESTO
-                deg[i,j]=1
-                
-            elif deg[i,j]<0.00004: #Y DEJAR ESTO PARA NO TENER PROBLEMAS??? 
-                deg[i,j]=0
-    return deg
