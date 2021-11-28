@@ -80,13 +80,28 @@ def calculo_centro_interpol(x,xa,xb,aoi1,aoi2):
             if aoi1[i,j]>max_1:
                 max_1=aoi1[i,j]
                 p1=np.array([i,j])
+    #Ver si hay mas puntos muy altos: registrar 1
+    for i in range(len(aoi1[0])):
+        for j in range(len(aoi1[0])):
+            if aoi1[i,j]>max_1*0.99:
+                max_1_=aoi1[i,j]
+                p1_=np.array([i,j])
+                p1=(p1+p1_)/2   
+       
     max_2=0           
     for i in range(len(aoi2[0])):
         for j in range(len(aoi2[0])):
             if aoi2[i,j]>max_2:
                 max_2=aoi2[i,j]
                 p2=np.array([i,j])
-    
+   
+    for i in range(len(aoi2[0])):
+        for j in range(len(aoi2[0])):
+            if aoi2[i,j]>max_2*0.99:
+                max_2_=aoi2[i,j]
+                p2_=np.array([i,j])
+                p2=(p2+p2_)/2
+                
     p3=linear_interpolation_tuple(x, xa, xb, p1, p2)
     ##Creamos la matriz interpolada:
     desp1=p3-p1
