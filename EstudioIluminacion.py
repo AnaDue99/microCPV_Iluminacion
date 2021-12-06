@@ -13,9 +13,9 @@ from pvlib import location
 from pvlib import irradiance
 
 caracteristics_module={    
-    'tilt':30,
+    'tilt':17,
     'surface_azimuth':180,
-    'radius':1.00
+    'radius':0.9
     }
 
 caracteristics={
@@ -56,24 +56,35 @@ AOI=irradiance.aoi( caracteristics_module['tilt'],
                    solar_position['azimuth'])
 
 
-
 cell_grid=cell.circular_cell(caracteristics_module['radius'], 0, 0)
 gr.plot_grid('CELULA CIRCULAR',cell_grid)
 
 AOI=gr.transform_aoi(AOI)
 AOI.index = AOI.index.strftime("%H:%M")
-
-for i in AOI:
-    if i<65 and i>-65:
-        aoi=gr.spot_grid(i)
-        area_illum,area_elect= cell.areas_intersection(aoi,cell_grid)
-        gr.plot_grid(i,aoi)
+irradiance=AOI
 
 
+for i in range(len(times)):
     
-    
+    aoi=gr.spot_grid(AOI[i])
+    area_illum,area_elect=cell.areas_intersection(aoi,cell_grid)
+    gr.plot_grid(times[i],area_illum)
+    irradiance[i]=area_illum.sum()*total_irrad['poa_direct'][i]+total_irrad['poa_diffuse'][i]  
 
-        
+
+plt.plot(times,irradiance,label='Irradiancia para iluminación')
+plt.plot(times,total_irrad['poa_diffuse'],label='difusa')
+plt.plot(times,total_irrad['poa_direct'],label='directa')
+
+
+plt.legend(loc=(0.5, 0))
+plt.xlabel('Hora del día')
+plt.ylabel('Irradiance [W/m2]')
+plt.title("Muesta irradiancias a lo largo del día")
+
+plt.show()
+      
+
 
             
     

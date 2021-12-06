@@ -10,11 +10,13 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+sizex=251
+sizey=251
+
 ########################## FUNCIONES PRINCIPAL UTILIZADA EN EL CODIGO##############
 def spot_grid(aoi):
     Deg0,Deg5, Deg10,Deg15,Deg20,Deg25,Deg30,Deg35,Deg40,Deg45,Deg50,Deg55,Deg60 = read_csv()
-    
-    
+       
     if aoi<0:
         NEGATIVO=1    
         aoi=-aoi
@@ -86,24 +88,25 @@ def spot_grid(aoi):
         
     else:
         print("AOI FUERA DE ESTUDIO")
-        aoi_distribution=np.empty((501, 501),float)
+        aoi_distribution=np.zeros((sizex, sizey),float)
+    
     
     if NEGATIVO==1:
         aoi_distribution=mirror_grid(aoi_distribution)
     return aoi_distribution
 
-def plot_grid(aoi,aoi_distribution):
+def plot_grid(title,aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
         sns.heatmap(aoi_distribution,vmin=0,  vmax=0.00004, square=True,  cmap="YlGnBu_r")
-        plt.title(aoi)
+        plt.title(title)
         plt.show()
-        
+       
 def mirror_grid(aoi):
     aoi_mirror=np.empty((501, 501),float)
     for i in range(len(aoi[0])):
         for j in range(len(aoi[0])):
-            aoi_mirror[i,j]=aoi[i,500-j]
+            aoi_mirror[i,j]=aoi[i,sizex-1-j]
     return aoi_mirror
 
 def transform_aoi(AOI):
@@ -171,6 +174,20 @@ def read_csv():
     deg55=Deg55.to_numpy()
     deg60=Deg60.to_numpy()
     
+    deg0=reduce_(deg0)
+    deg5=reduce_(deg5)
+    deg10=reduce_(deg10)
+    deg15=reduce_(deg15)
+    deg20=reduce_(deg20)
+    deg25=reduce_(deg25)
+    deg30=reduce_(deg30)
+    deg35=reduce_(deg35)
+    deg40=reduce_(deg40)
+    deg45=reduce_(deg45)
+    deg50=reduce_(deg50)
+    deg55=reduce_(deg55)
+    deg60=reduce_(deg60)   
+    
     return  deg0, deg5,deg10, deg15,deg20,deg25,deg30,deg35,deg40,deg45,deg50,deg55,deg60
                                 
                             ###FUNCION CALCULA LA MATRIZ ###
@@ -185,8 +202,8 @@ def generic_spot_grid(x,xa,xb,aoi1,aoi2):
     desp1=p3-p1
     desp2=p3-p2
     
-    aoi3=np.empty((501, 501),float)
-    aoi4=np.empty((501, 501),float)
+    aoi3=np.zeros((sizex, sizey),float)
+    aoi4=np.zeros((sizex, sizey),float)
     for i in range(len(aoi3[0])):
         for j in range(len(aoi3[0])):
             
@@ -195,17 +212,24 @@ def generic_spot_grid(x,xa,xb,aoi1,aoi2):
             desp2_0=int(i-desp2[0])
             desp2_1=int(j-desp2[1])
            
-            if desp1_0 < 501 and desp1_1 < 501 and desp1_0 > 0 and desp1_1 > 0: 
+            if desp1_0 < sizex and desp1_1 < sizey and desp1_0 > 0 and desp1_1 > 0: 
                 aoi3[i,j]+=aoi1[desp1_0,desp1_1]
            
-            if  desp2_0 < 501 and desp2_1 < 501  and desp2_0 > 0 and desp2_1 > 0:
+            if  desp2_0 < sizex and desp2_1 < sizey  and desp2_0 > 0 and desp2_1 > 0:
                 aoi4[i,j]+=aoi2[desp2_0,desp2_1]
 
     aoi_pedido=linear_interpolation(x, xa, xb, aoi3, aoi4)
     return aoi_pedido
-
+                            ###REDUCIMOS EL TAMAÑO ###
+def reduce_(aoi):
+    aoi_reduce=np.zeros((sizex, sizey),float)
+    for i in range(int(sizex/2),int(501-sizex/2),1):
+        for j in range(int(sizey/2),int(501-sizey/2),1):
+            aoi_reduce[int(i-sizex/2),int(j-sizey/2)]=aoi[i,j]
+    return aoi_reduce
                           ####CALCULO PUNTO MAXIMO AOI ##
 def aoi_half_point(aoi):
+    
     max_=0
     for i in range(len(aoi[0])):
         for j in range(len(aoi[0])):
