@@ -5,7 +5,7 @@ Spyder Editor
 
 """
 import numpy as np
-
+import module_AoiGrids as gr
 sizex=251
 sizey=251
 ########################## FUNCIONES PRINCIPALES UTILIZADAS EN EL CODIGO##############
@@ -25,7 +25,7 @@ def rectangular_cell(l1,l2,desx,desy,precision=0.04):
     return area
 
                         ##DEFINICIÓN CELCULA CIRCULAR##
-def circular_cell(r,desx,desy,precision=0.04):
+def circular_cell(r,desy,desx,precision=0.04):
     area=np.zeros((sizex, sizey),int)
     #han de ser valores como con mucho 0,04 mm de precision 
     r=r/precision
@@ -57,3 +57,9 @@ def areas_intersection(area_spot,area_celula):
     
     return area_iluminacion, area_electricidad
 
+def irradiance_cell(radio,dy,dx,AOI,directa,difusa):
+    cell_grid=circular_cell(radio, dy, dx)
+    spot=gr.spot_grid(AOI)
+    area_illum,area_elect=areas_intersection(spot,cell_grid)
+    irradiance=area_illum.sum()*directa+difusa
+    return irradiance

@@ -13,17 +13,17 @@ from pvlib import location
 from pvlib import irradiance
 
 caracteristics_module={    
-    'tilt':17,
+    'tilt':0,
     'surface_azimuth':180,
-    'radius':0.9
+    'radius':1.2
     }
 
 caracteristics={
     'lat':40.405655,
     'lon':-3.647649,
-    'tz':'Etc/GMT+2',
+    'tz':'Etc/GMT-2',
     'date':'21-06-2020',
-    'temp':60
+    
     }
 "Creamos objeto con la localización"
 site = location.Location(caracteristics['lat'], 
@@ -61,18 +61,17 @@ gr.plot_grid('CELULA CIRCULAR',cell_grid)
 
 AOI=gr.transform_aoi(AOI)
 AOI.index = AOI.index.strftime("%H:%M")
-irradiance=AOI
+irradiance= np.empty_like (AOI)
 
 
 for i in range(len(times)):
-    
-    aoi=gr.spot_grid(AOI[i])
-    area_illum,area_elect=cell.areas_intersection(aoi,cell_grid)
-    gr.plot_grid(times[i],area_illum)
-    irradiance[i]=area_illum.sum()*total_irrad['poa_direct'][i]+total_irrad['poa_diffuse'][i]  
+    irradiance[i]=cell.irradiance_cell(caracteristics_module['radius'], 0, 0, AOI[i], total_irrad['poa_direct'][i],
+                         total_irrad['poa_diffuse'][i])
 
 
-plt.plot(times,irradiance,label='Irradiancia para iluminación')
+
+
+plt.plot(times,irradiance,label='Irradiancia para electricidad')
 plt.plot(times,total_irrad['poa_diffuse'],label='difusa')
 plt.plot(times,total_irrad['poa_direct'],label='directa')
 

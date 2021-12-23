@@ -87,8 +87,7 @@ def spot_grid(aoi):
         aoi_distribution=Deg60
         
     else:
-        print("AOI FUERA DE ESTUDIO")
-        aoi_distribution=np.zeros((sizex, sizey),float)
+       aoi_distribution=np.zeros((sizex, sizey),float)
     
     
     if NEGATIVO==1:
@@ -103,7 +102,7 @@ def plot_grid(title,aoi_distribution):
         plt.show()
        
 def mirror_grid(aoi):
-    aoi_mirror=np.empty((501, 501),float)
+    aoi_mirror=np.empty((sizex, sizey),float)
     for i in range(len(aoi[0])):
         for j in range(len(aoi[0])):
             aoi_mirror[i,j]=aoi[i,sizex-1-j]
