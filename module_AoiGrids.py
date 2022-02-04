@@ -9,6 +9,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from pvlib import location
+from pvlib import irradiance
 
 sizex=251
 sizey=251
@@ -108,7 +110,9 @@ def mirror_grid(aoi):
             aoi_mirror[i,j]=aoi[i,sizex-1-j]
     return aoi_mirror
 
-def transform_aoi(AOI):
+def transform_aoi(AOI):  
+    
+
     for x in range(len(AOI)):
         if AOI[x]>90:
             AOI[x]=90
@@ -124,6 +128,40 @@ def transform_aoi(AOI):
         if AOI[x]>90:
             AOI[x]=90
         return AOI
+def get_data_location(caracteristics,caracteristics_module,date):
+    site = location.Location(caracteristics['lat'], 
+                             caracteristics['lon'],
+                            caracteristics['tz'])                                                      
+    times = pd.date_range(date, freq='10min', periods=6*24,
+                      tz=site.tz)
+    clearsky = site.get_clearsky(times)
+    solar_position = site.get_solarposition(times)
+    
+    total_irrad=irradiance.get_total_irradiance( 
+    surface_tilt=caracteristics_module['tilt'],
+    surface_azimuth=caracteristics_module['surface_azimuth'],
+    dni=clearsky['dni'],
+    ghi=clearsky['ghi'],
+    dhi=clearsky['dhi'],
+    solar_zenith=solar_position['apparent_zenith'],
+    solar_azimuth=solar_position['azimuth'])
+    
+    AOI_=irradiance.aoi( caracteristics_module['tilt'],
+                   caracteristics_module['surface_azimuth'],
+                   solar_position['apparent_zenith'], 
+                   solar_position['azimuth'])
+    
+    AOI=transform_aoi(AOI_)
+    AOI.index = AOI.index.strftime("%H:%M")
+    total_irrad.index = total_irrad.index.strftime("%H:%M")
+    return pd.DataFrame({'AOI': AOI,
+                         'POA_direct': total_irrad['poa_direct'],
+                         'POA_diffuse': total_irrad['poa_diffuse'],
+                         'POA_tot':total_irrad['poa_global']})
+    
+
+
+
 #################### FUNCIONES UTILIZADAS EN LAS FUNCIONES ANTERIORES #################                                
 
                                 #### LECTURA CVS ###

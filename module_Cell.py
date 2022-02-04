@@ -25,7 +25,7 @@ def rectangular_cell(l1,l2,desx,desy,precision=0.04):
     return area
 
                         ##DEFINICIÓN CELCULA CIRCULAR##
-def circular_cell(r,desy,desx,precision=0.04):
+def circular_cell(r,desx,desy,precision=0.04):
     area=np.zeros((sizex, sizey),int)
     #han de ser valores como con mucho 0,04 mm de precision 
     r=r/precision
@@ -36,10 +36,10 @@ def circular_cell(r,desy,desx,precision=0.04):
     for i in range(len(area[0])):
         for j in range(len(area[0])):
             if i**2+j**2 <= r**2 :
-                area[int(i+x+sizex/2),int(j+y+sizey/2)]=1
-                area[int(-i+x+sizex/2),int(j+y+sizey/2)]=1
-                area[int(i+x+sizex/2),int(-j+y+sizey/2)]=1
-                area[int(-i+x+sizex/2),int(-j+y+sizey/2)]=1
+                area[int(i+y+sizey/2),int(j+x+sizex/2)]=1
+                area[int(-i+y+sizey/2),int(j+x+sizex/2)]=1
+                area[int(i+y+sizey/2),int(-j+x+sizex/2)]=1
+                area[int(-i+y+sizey/2),int(-j+x+sizex/2)]=1
     return area
 
   ##!!!!!!!!!! INTERSECCIÓN ÁREAS->Devuelve grid iluminación y electricidad##
@@ -57,9 +57,9 @@ def areas_intersection(area_spot,area_celula):
     
     return area_iluminacion, area_electricidad
 
-def irradiance_cell(radio,dy,dx,AOI,directa,difusa):
+def irradiance_cell(radio,dy,dx,AOI):
     cell_grid=circular_cell(radio, dy, dx)
     spot=gr.spot_grid(AOI)
     area_illum,area_elect=areas_intersection(spot,cell_grid)
-    irradiance=area_illum.sum()*directa+difusa
+    irradiance=area_illum.sum()
     return irradiance

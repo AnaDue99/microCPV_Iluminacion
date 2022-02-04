@@ -22,7 +22,7 @@ caracteristics={
     'lat':40.405655,
     'lon':-3.647649,
     'tz':'Etc/GMT-2',
-    'date':'21-06-2020',
+    'date':'2021-02-2',
     
     }
 "Creamos objeto con la localización"
@@ -65,8 +65,7 @@ irradiance= np.empty_like (AOI)
 
 
 for i in range(len(times)):
-    irradiance[i]=cell.irradiance_cell(caracteristics_module['radius'], 0, 0, AOI[i], total_irrad['poa_direct'][i],
-                         total_irrad['poa_diffuse'][i])
+    irradiance[i]=cell.irradiance_cell(caracteristics_module['radius'], 0, 0, AOI[i])
 
 
 
