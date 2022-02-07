@@ -17,7 +17,7 @@ sizey=251
 
 ########################## FUNCIONES PRINCIPAL UTILIZADA EN EL CODIGO##############
 def spot_grid(aoi):
-    Deg0,Deg5, Deg10,Deg15,Deg20,Deg25,Deg30,Deg35,Deg40,Deg45,Deg50,Deg55,Deg60 = read_csv()
+    
        
     if aoi<0:
         NEGATIVO=1    
@@ -27,66 +27,66 @@ def spot_grid(aoi):
                 
     if aoi <5:
         if aoi==0:
-            aoi_distribution=Deg0
+            aoi_distribution=read_csv(0)
         else:
-            aoi_distribution=generic_spot_grid(aoi,0,5,Deg0,Deg5)
+            aoi_distribution=generic_spot_grid(aoi,0,5,read_csv(0),read_csv(5))
     elif aoi<10:
         if aoi==5:
-            aoi_distribution=Deg5
+            aoi_distribution=read_csv(5)
         else:
-            aoi_distribution=generic_spot_grid(aoi,5,10,Deg5,Deg10)
+            aoi_distribution=generic_spot_grid(aoi,5,10,read_csv(5),read_csv(10))
     elif aoi<15:
         if aoi==10:
-            aoi_distribution=Deg10
+            aoi_distribution=read_csv(10)
         else:
-            aoi_distribution=generic_spot_grid(aoi,10,15,Deg10,Deg15)
+            aoi_distribution=generic_spot_grid(aoi,10,15,read_csv(10),read_csv(15))
     elif aoi<20:
         if aoi==15:
-            aoi_distribution=Deg15
+            aoi_distribution=read_csv(15)
         else:
-            aoi_distribution=generic_spot_grid(aoi,15,20,Deg15,Deg20)
+            aoi_distribution=generic_spot_grid(aoi,15,20,read_csv(15),read_csv(20))
     elif aoi<25:
         if aoi==20:
-            aoi_distribution=Deg20
+            aoi_distribution=read_csv(20)
         else:
-            aoi_distribution=generic_spot_grid(aoi,20,25,Deg20,Deg25)
+            aoi_distribution=generic_spot_grid(aoi,20,25,read_csv(20),read_csv(25))
     elif aoi<30:
         if aoi==25:
-            aoi_distribution=Deg25
+            aoi_distribution=read_csv(25)
         else:
-            aoi_distribution=generic_spot_grid(aoi,25,30,Deg25,Deg30)
+            aoi_distribution=generic_spot_grid(aoi,25,30,read_csv(25),read_csv(30))
     elif aoi<35:
         if aoi==30:
-            aoi_distribution=Deg30
+            aoi_distribution=read_csv(30)
         else:
-            aoi_distribution=generic_spot_grid(aoi,30,35,Deg30,Deg35)
+            aoi_distribution=generic_spot_grid(aoi,30,35,read_csv(30),read_csv(35))
     elif aoi<40:
         if aoi==35:
-            aoi_distribution=Deg35
+            aoi_distribution=read_csv(35)
         else:
-            aoi_distribution=generic_spot_grid(aoi,35,40,Deg35,Deg40)
+            aoi_distribution=generic_spot_grid(aoi,35,40,read_csv(35),read_csv(40))
     elif aoi<45:
         if aoi==40:
-            aoi_distribution=Deg40
+            aoi_distribution=read_csv(40)
         else:
-            aoi_distribution=generic_spot_grid(aoi,40,45,Deg40,Deg45)
+            aoi_distribution=generic_spot_grid(aoi,40,45,read_csv(40),read_csv(45))
     elif aoi<50:
         if aoi==45:
-            aoi_distribution=Deg45
+            aoi_distribution=read_csv(45)
         else:
-            aoi_distribution=generic_spot_grid(aoi,45,50,Deg45,Deg50)
+            aoi_distribution=generic_spot_grid(aoi,45,50,read_csv(45),read_csv(50))
     elif aoi<55:
         if aoi==50:
-            aoi_distribution=Deg50
+            aoi_distribution=read_csv(50)
         else:
-            aoi_distribution=generic_spot_grid(aoi,50,55,Deg50,Deg55)
+            aoi_distribution=generic_spot_grid(aoi,50,55,read_csv(50),read_csv(55))
     elif aoi<60:
         if aoi==55:
-            aoi_distribution=Deg55
+            aoi_distribution=read_csv(55)
         else:
-            aoi_distribution=generic_spot_grid(aoi,55,60,Deg55,Deg60)
+            aoi_distribution=generic_spot_grid(aoi,55,60,read_csv(55),read_csv(60))
     elif aoi==60:
-        aoi_distribution=Deg60
+        aoi_distribution=read_csv(60)
         
     else:
        aoi_distribution=np.zeros((sizex, sizey),float)
@@ -110,8 +110,7 @@ def mirror_grid(aoi):
             aoi_mirror[i,j]=aoi[i,sizex-1-j]
     return aoi_mirror
 
-def transform_aoi(AOI):  
-    
+def transform_aoi(AOI):    
 
     for x in range(len(AOI)):
         if AOI[x]>90:
@@ -165,67 +164,17 @@ def get_data_location(caracteristics,caracteristics_module,date):
 #################### FUNCIONES UTILIZADAS EN LAS FUNCIONES ANTERIORES #################                                
 
                                 #### LECTURA CVS ###
-def read_csv():
+def read_csv(aoi):
     #Leemos del CSV los datos
-    Deg0 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_0deg\OptiMesh_0deg.csv")   
-    Deg5 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_5deg\OptiMesh_5deg.csv") 
-    Deg10 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_10deg\OptiMesh_10deg.csv")   
-    Deg15 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_15deg\OptiMesh_15deg.csv") 
-    Deg20 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_20deg\OptiMesh_20deg.csv")   
-    Deg25 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_25deg\OptiMesh_25deg.csv") 
-    Deg30 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_30deg\OptiMesh_30deg.csv")   
-    Deg35 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_35deg\OptiMesh_35deg.csv") 
-    Deg40 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_40deg\OptiMesh_40deg.csv")   
-    Deg45 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_45deg\OptiMesh_45deg.csv") 
-    Deg50 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_50deg\OptiMesh_50deg.csv")   
-    Deg55 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_55deg\OptiMesh_55deg.csv") 
-    Deg60 = pd.read_csv("spots inso 29-Oct-2021\InsoPMMA_60deg\OptiMesh_60deg.csv")
+   path = f"spots inso 29-Oct-2021\InsoPMMA_{aoi}deg\OptiMesh_{aoi}deg.csv"
+   Deg = pd.read_csv(path, index_col=0)
+   deg=Deg.to_numpy()
+   spot=reduce_(deg)
+      
+   return spot
     
-    #Pasamos la columna NaN a indice. 
     
-    Deg5.set_index('NaN',inplace=True)
-    Deg10.set_index('NaN',inplace=True)
-    Deg15.set_index('NaN',inplace=True)
-    Deg20.set_index('NaN',inplace=True)
-    Deg25.set_index('NaN',inplace=True)
-    Deg30.set_index('NaN',inplace=True)
-    Deg35.set_index('NaN',inplace=True)
-    Deg40.set_index('NaN',inplace=True)
-    Deg45.set_index('NaN',inplace=True)
-    Deg50.set_index('NaN',inplace=True)
-    Deg55.set_index('NaN',inplace=True)
-    Deg60.set_index('NaN',inplace=True)
-   
-    #Se ha preferido trabajar con matrices aunque no descarto intentarlo con dataframe luego
-    deg0=Deg0.to_numpy()
-    deg5=Deg5.to_numpy()
-    deg10=Deg10.to_numpy()
-    deg15=Deg15.to_numpy()
-    deg20=Deg20.to_numpy()
-    deg25=Deg25.to_numpy()
-    deg30=Deg30.to_numpy()
-    deg35=Deg35.to_numpy()
-    deg40=Deg40.to_numpy()
-    deg45=Deg45.to_numpy()
-    deg50=Deg50.to_numpy()
-    deg55=Deg55.to_numpy()
-    deg60=Deg60.to_numpy()
     
-    deg0=reduce_(deg0)
-    deg5=reduce_(deg5)
-    deg10=reduce_(deg10)
-    deg15=reduce_(deg15)
-    deg20=reduce_(deg20)
-    deg25=reduce_(deg25)
-    deg30=reduce_(deg30)
-    deg35=reduce_(deg35)
-    deg40=reduce_(deg40)
-    deg45=reduce_(deg45)
-    deg50=reduce_(deg50)
-    deg55=reduce_(deg55)
-    deg60=reduce_(deg60)   
-    
-    return  deg0, deg5,deg10, deg15,deg20,deg25,deg30,deg35,deg40,deg45,deg50,deg55,deg60
                                 
                             ###FUNCION CALCULA LA MATRIZ ###
 def generic_spot_grid(x,xa,xb,aoi1,aoi2): 

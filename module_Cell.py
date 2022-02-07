@@ -57,9 +57,10 @@ def areas_intersection(area_spot,area_celula):
     
     return area_iluminacion, area_electricidad
 
-def irradiance_cell(radio,dy,dx,AOI):
+def irradiance_cell(radio,dy,dx,AOI,directa,difusa):
+    cte=1/0.0028
     cell_grid=circular_cell(radio, dy, dx)
     spot=gr.spot_grid(AOI)
     area_illum,area_elect=areas_intersection(spot,cell_grid)
-    irradiance=area_illum.sum()
+    irradiance=area_illum.sum()*cte
     return irradiance
