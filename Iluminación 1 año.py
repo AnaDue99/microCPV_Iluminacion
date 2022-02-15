@@ -23,7 +23,7 @@ date= date + np.arange(365)
 caracteristics_module={    
     'tilt':0,
     'surface_azimuth':180,
-    'radius':1.2
+    'radius':0.6
     }
 
 caracteristics={

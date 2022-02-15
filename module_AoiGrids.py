@@ -11,20 +11,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from pvlib import location
 from pvlib import irradiance
-
-sizex=251
-sizey=251
+from scipy.interpolate import InterpolatedUnivariateSpline as interp
+sizex=201
+sizey=201
 
 ########################## FUNCIONES PRINCIPAL UTILIZADA EN EL CODIGO##############
 def spot_grid(aoi):
-    
-       
-    if aoi<0:
-        NEGATIVO=1    
-        aoi=-aoi
-    else:
-        NEGATIVO=0
-                
+    cte=1/0.00028
+                  
     if aoi <5:
         if aoi==0:
             aoi_distribution=read_csv(0)
@@ -91,42 +85,18 @@ def spot_grid(aoi):
     else:
        aoi_distribution=np.zeros((sizex, sizey),float)
     
-    
-    if NEGATIVO==1:
-        aoi_distribution=mirror_grid(aoi_distribution)
-    return aoi_distribution
+
+    return aoi_distribution*cte
 
 def plot_grid(title,aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
-        sns.heatmap(aoi_distribution,vmin=0,  vmax=0.00004, square=True,  cmap="YlGnBu_r")
+        sns.heatmap(aoi_distribution,vmin=0,  vmax=6, square=True,  cmap="YlGnBu_r")
         plt.title(title)
         plt.show()
        
-def mirror_grid(aoi):
-    aoi_mirror=np.empty((sizex, sizey),float)
-    for i in range(len(aoi[0])):
-        for j in range(len(aoi[0])):
-            aoi_mirror[i,j]=aoi[i,sizex-1-j]
-    return aoi_mirror
 
-def transform_aoi(AOI):    
 
-    for x in range(len(AOI)):
-        if AOI[x]>90:
-            AOI[x]=90
-            
-    min_AOI=min(AOI)
-    for x in range(len(AOI)):
-        if AOI[x]==min_AOI:
-            a=x
-            for x in range(a,len(AOI)):
-              AOI[x]=-AOI[x]
-    
-    for x in range(len(AOI)):
-        if AOI[x]>90:
-            AOI[x]=90
-        return AOI
 def get_data_location(caracteristics,caracteristics_module,date):
     site = location.Location(caracteristics['lat'], 
                              caracteristics['lon'],
@@ -150,13 +120,20 @@ def get_data_location(caracteristics,caracteristics_module,date):
                    solar_position['apparent_zenith'], 
                    solar_position['azimuth'])
     
-    AOI=transform_aoi(AOI_)
+    AOI= AOI_ 
+    for i in range(len(AOI_)):
+        if AOI_[i]>90:
+            AOI[i]=90
+        else:
+            AOI[i]=AOI_[i]
+    
     AOI.index = AOI.index.strftime("%H:%M")
     total_irrad.index = total_irrad.index.strftime("%H:%M")
     return pd.DataFrame({'AOI': AOI,
                          'POA_direct': total_irrad['poa_direct'],
                          'POA_diffuse': total_irrad['poa_diffuse'],
-                         'POA_tot':total_irrad['poa_global']})
+                         'POA_tot':total_irrad['poa_global'],
+                         'times':times})
     
 
 
@@ -173,15 +150,12 @@ def read_csv(aoi):
       
    return spot
     
-    
-    
+       
                                 
                             ###FUNCION CALCULA LA MATRIZ ###
-def generic_spot_grid(x,xa,xb,aoi1,aoi2): 
-    
+def generic_spot_grid(x,xa,xb,aoi1,aoi2):     
     p1=aoi_half_point(aoi1)   
-    p2=aoi_half_point(aoi2)  
-                   
+    p2=aoi_half_point(aoi2)                     
     p3=linear_interpolation(x, xa, xb, p1, p2)
     
     ##Creamos la matriz interpolada:
@@ -209,13 +183,14 @@ def generic_spot_grid(x,xa,xb,aoi1,aoi2):
                             ###REDUCIMOS EL TAMAÑO ###
 def reduce_(aoi):
     aoi_reduce=np.zeros((sizex, sizey),float)
-    for i in range(int(sizex/2),int(501-sizex/2),1):
-        for j in range(int(sizey/2),int(501-sizey/2),1):
-            aoi_reduce[int(i-sizex/2),int(j-sizey/2)]=aoi[i,j]
+    restx=(501-sizex)/2
+    resty=(501-sizey)/2
+    for i in range(int(restx),int(501-restx),1):
+        for j in range(int(resty),int(501-resty),1):
+            aoi_reduce[int(i-restx),int(j-resty)]=aoi[i,j]
     return aoi_reduce
                           ####CALCULO PUNTO MAXIMO AOI ##
-def aoi_half_point(aoi):
-    
+def aoi_half_point(aoi):    
     max_=0
     for i in range(len(aoi[0])):
         for j in range(len(aoi[0])):
@@ -236,4 +211,14 @@ def linear_interpolation(x,xa,xb,ya,yb):
     #ya yb son las matrices de los aoi que se tienen
     y=ya+(x-xa)*(yb-ya)/(xb-xa)
     return y 
+
+def interp_irrad_desp(desp,aoi,n1,n2,f1,f2):
+    irradiance_interp=[]
+    desp_2=[]   
+    for i in desp:
+        irradiance_interp.append(linear_interpolation(aoi,n1,n2,f1(i),f2(i)))   
+   
+            
+    f3=interp(desp_2,irradiance_interp,k=3)
+    return f3
 
