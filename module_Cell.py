@@ -120,7 +120,7 @@ def function(desp,radio):
     
     return f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60
     
-def irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
+def irrad_BORRAR(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
     if aoi<5:
         if aoi==0:
             irrad=f_0(desp)
@@ -188,6 +188,49 @@ def irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_6
     
     return irrad
 
+def irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
+    if aoi<2.5:
+       irrad=f_0(desp)
+        
+    elif aoi<7.5:
+        irrad=f_5(desp)
+        
+    elif aoi<12.5:
+        irrad=f_10(desp)
+        
+    elif aoi<17.5:
+        irrad=f_15(desp)
+        
+    elif aoi<22.5:
+       irrad=f_20(desp)
+       
+    elif aoi<27.5:
+        irrad=f_25(desp)
+        
+    elif aoi<32.5:
+        irrad=f_30(desp)
+       
+    elif aoi<37.5:
+        irrad=f_35(desp)
+        
+    elif aoi<42.5:
+       irrad=f_40(desp)
+       
+    elif aoi<47.5:
+        irrad=f_45(desp)
+        
+    elif aoi<52.5:
+        irrad=f_50(desp)
+        
+    elif aoi<57.5:
+        irrad=f_55(desp)
+     
+    elif aoi==60:
+        irrad=f_60(desp)
+    else: 
+        irrad=0
+    
+    return irrad
 def from_irrad_to_ilum(irrad,area):
     #Irrad está en W/m2
     #Area está en m2
