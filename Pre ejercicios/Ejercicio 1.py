@@ -205,7 +205,7 @@ plt.xlabel('AOI [º]')
 plt.ylabel('Irradiance [W/m2]')
 plt.title('Muesta irradiancias dependiendod el AOI de una lente TENIENDO EN CUENTA EL SPOT')
 plt.show()
-plt.gcf().set_tight_layout(True)
+
 
 
 

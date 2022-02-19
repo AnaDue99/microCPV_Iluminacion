@@ -134,6 +134,7 @@ def get_data_location(caracteristics,caracteristics_module,date):
                          'POA_diffuse': total_irrad['poa_diffuse'],
                          'POA_tot':total_irrad['poa_global'],
                          'times':times})
+
     
 
 
