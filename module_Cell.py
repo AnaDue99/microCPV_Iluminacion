@@ -235,14 +235,14 @@ def from_irrad_to_ilum(irrad,area):
     #Irrad está en W/m2
     #Area está en m2
     Potencia_rad=irrad*area # W
-    Potencia_lum=Potencia_rad*683 #Lux
-    ilum=irrad*683  #Lumen
+    Potencia_lum=Potencia_rad*105 #Lux
+    ilum=irrad*105  #Lumen
     return Potencia_lum
 
 def from_ilum_to_irrad(Potencia_lum,area):
     #Potencia_lum en lux
     #Area está en m2
-    Potencia_rad=Potencia_lum/683
+    Potencia_rad=Potencia_lum/105
     irrad=Potencia_rad/area      #W/m2
     return irrad
 
