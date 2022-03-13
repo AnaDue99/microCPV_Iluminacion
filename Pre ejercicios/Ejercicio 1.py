@@ -27,7 +27,7 @@ caracteristics_module={
 caracteristics={
     'lat':40.405655,
     'lon':-3.647649,
-    'tz':'Etc/GMT+2',
+    'tz':'Europe/Madrid',
     'date':'21-06-2020',
     'temp':60
     }

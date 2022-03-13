@@ -27,7 +27,7 @@ def rectangular_cell(l1,l2,desx,desy,precision=0.04):
             area[int(i+x),int(j+y)]=10
     return area
 
-                        ##DEFINICIÓN CELCULA CIRCULAR##
+                        ##DEFINICIÓN CELULA CIRCULAR##
 def circular_cell(r,desx,desy,precision=0.04):
     area=np.zeros((sizex, sizey),int)
     #han de ser valores como con mucho 0,04 mm de precision 
@@ -60,19 +60,13 @@ def areas_intersection(area_spot,area_celula):
     
     return area_iluminacion, area_electricidad
 
-def irradiance_cell(radio,dy,dx,AOI,directa=1,difusa=0):    
+def irradiance_cell(radio,dy,dx,AOI):    
     cell_grid=circular_cell(radio, dy, dx)
     spot=gr.spot_grid(AOI)
     area_illum,area_elect=areas_intersection(spot,cell_grid)
-    irradiance=area_illum.sum()*directa+difusa
-    illumination=irradiance*683*179*10**-6  #En lux  683lum/W  1 lumen= 1 lux/m2
-    return illumination
-
-def  desp_function(radio,desp,aoi):
-    irrad_aoi=[]
-    for i in desp:
-        irrad_aoi.append(irradiance_cell(radio, i, 0, aoi))
-    return irrad_aoi
+    illum=area_illum.sum()
+    elect=area_elect.sum()    
+    return illum
 
 def function(desp,radio):
     irradiance_aoi_0=[]
@@ -120,75 +114,10 @@ def function(desp,radio):
     
     return f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60
     
-def irrad_BORRAR(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
-    if aoi<5:
-        if aoi==0:
-            irrad=f_0(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,0,5,f_0(desp),f_5(desp))
-    elif aoi<10:
-        if aoi==5:
-            irrad=f_5(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,5,10,f_5(desp),f_10(desp))
-    elif aoi<15:
-        if aoi==10:
-            irrad=f_10(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,10,15,f_10(desp),f_15(desp))
-    elif aoi<20:
-        if aoi==15:
-            irrad=f_15(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,15,20,f_15(desp),f_20(desp))
-    elif aoi<25:
-        if aoi==20:
-            irrad=f_20(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,20,25,f_20(desp),f_25(desp))
-    elif aoi<30:
-        if aoi==25:
-            irrad=f_25(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,25,30,f_25(desp),f_30(desp))
-    elif aoi<35:
-        if aoi==30:
-            irrad=f_30(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,30,35,f_30(desp),f_35(desp))
-    elif aoi<40:
-        if aoi==35:
-            irrad=f_35(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,35,40,f_35(desp),f_40(desp))
-    elif aoi<45:
-        if aoi==40:
-            irrad=f_40(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,40,45,f_40(desp),f_45(desp))
-    elif aoi<50:
-        if aoi==45:
-            irrad=f_45(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,45,50,f_45(desp),f_50(desp))
-    elif aoi<55:
-        if aoi==50:
-            irrad=f_50(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,50,55,f_50(desp),f_55(desp))
-    elif aoi<60:
-        if aoi==55:
-            irrad=f_55(desp)
-        else:
-            irrad=gr.linear_interpolation(aoi,55,60,f_55(desp),f_60(desp))
-    elif aoi==60:
-        irrad=f_60(desp)
-    else: 
-        irrad=0
-    
-    return irrad
 
-def irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
+
+    
+def performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
     if aoi<2.5:
        irrad=f_0(desp)
         
@@ -235,28 +164,31 @@ def from_irrad_to_ilum(irrad,area):
     #Irrad está en W/m2
     #Area está en m2
     Potencia_rad=irrad*area # W
-    Potencia_lum=Potencia_rad*105 #Lux
-    ilum=irrad*105  #Lumen
-    return Potencia_lum
+    Lumen=Potencia_rad*105 
+    Lux=irrad*105  
+    return Lumen
 
-def from_ilum_to_irrad(Potencia_lum,area):
-    #Potencia_lum en lux
+def from_ilum_to_irrad(Lumen,area):
     #Area está en m2
-    Potencia_rad=Potencia_lum/105
-    irrad=Potencia_rad/area      #W/m2
+    irrad=Lumen/(105*area) #W/m2
+    lux=Lumen/area      
     return irrad
 
 
 def adjust(illum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
     desp=0 
     irrad_cte=from_ilum_to_irrad(illum_cte,area)
-    val_irrad=irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
+    val_irrad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
        
     while val_irrad>irrad_cte:
         desp=desp+0.01
        
-        val_irrad=irrad(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
+        val_irrad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
         
     illum_out=from_irrad_to_ilum(val_irrad,area)
         
     return desp,illum_out
+
+
+            
+            

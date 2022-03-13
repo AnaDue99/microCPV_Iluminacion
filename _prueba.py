@@ -62,7 +62,7 @@ labels = [
     for vals in zip(relative_airmass, solpos.apparent_zenith, time_labels)
 ]
 plt.legend(labels)
-
+plt.show()
 
 
 effic=[0.000039,0.000120,0.000396,0.001210,0.004000,0.011600,0.023000,0.038000,0.060000,0.090980,0.139020,0.208020,0.32300,0.444310, 0.503000,0.710000,0.862000,0.954000,0.994950,1.000000,0.995000,0.952000,0.870000,0.757000,0.631000,0.503000,0.381000,0.265000,0.175000, 0.107000,0.061000,0.032000,0.017000,0.008210,0.004102,0.002091,0.001047,0.000520,0.000249,0.000120,0.000060,0.000030]
@@ -73,9 +73,9 @@ effic_.index=wave_len
 
 
 effic_.plot()
-plt.xlabel('lon')
-plt.ylabel('Lux de iluminancia')
-plt.title("Muesta lumen para todo el año en una sola célula con el desp del solsticio de invierno")
+plt.xlabel(r"Longitud de onda ($nm$)")
+plt.ylabel('Eficiencia en tanto por 1')
+plt.title("Curva fotópica")
 plt.show()
 
 photopic_curve=interp(wave_len,effic,k=3)

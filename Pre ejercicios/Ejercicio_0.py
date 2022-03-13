@@ -81,17 +81,17 @@ def dibujar_radiacion(summer, winter):
         
     fig, (ax1,ax2) = plt.subplots(1,2, sharey=True)
     
-    summer['POA'].plot(ax=ax1, label='POA_GLOBAL')
-    summer['POA_diffuse'].plot(ax=ax1, label='POA_DIFFUSE')
-    summer['POA_direct'].plot(ax=ax1, label='POA_DIRECT')
+    summer['POA'].plot(ax=ax1, label='Total')
+    summer['POA_diffuse'].plot(ax=ax1, label='Difusa')
+    summer['POA_direct'].plot(ax=ax1, label='Directa')
     
-    winter['POA'].plot(ax=ax2, label='POA_GLOBAL')
-    winter['POA_diffuse'].plot(ax=ax2, label='POA_DIFFUSE')
-    winter['POA_direct'].plot(ax=ax2, label='POA_DIRECT')
+    winter['POA'].plot(ax=ax2, label='Total')
+    winter['POA_diffuse'].plot(ax=ax2, label='Difusa')
+    winter['POA_direct'].plot(ax=ax2, label='Directa')
     
     
-    ax1.set_xlabel('Time of day (Summer)')
-    ax2.set_xlabel('Time of day (Winter)')
+    ax1.set_xlabel('Solsticio de verano')
+    ax2.set_xlabel('Solsticio de invierno')
     ax1.set_ylabel('Irradiance ($W/m^2$)')
     
     ax1.legend()
@@ -130,7 +130,7 @@ def dibujar_curvas(summer,winter):
 caracteristics_ETSIDI_summer={
     'lat':40.405655,
     'lon':-3.700292,
-    'tz':'Etc/GMT+2',
+    'tz':'Europe/Madrid',
     'date':'21-06-2020',
     'temp':60
     }
@@ -138,13 +138,13 @@ caracteristics_ETSIDI_summer={
 caracteristics_ETSIDI_winter={
     'lat':40,
     'lon':-3.700292,
-    'tz':'Etc/GMT+2',
+    'tz':'Europe/Madrid',
     'date':'21-12-2020',
     'temp':50
     }
 
 caracteristics_module={
-    'tilt':30,
+    'tilt':20,
     'surface_azimuth':180,   
     'alpha_sc':0.0046,
     'a_ref':2.63,
