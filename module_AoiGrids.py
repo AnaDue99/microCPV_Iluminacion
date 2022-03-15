@@ -150,8 +150,7 @@ def read_csv(aoi):
    spot=reduce_(deg)
       
    return spot
-    
-       
+
                                 
                             ###FUNCION CALCULA LA MATRIZ ###
 def generic_spot_grid(x,xa,xb,aoi1,aoi2):     

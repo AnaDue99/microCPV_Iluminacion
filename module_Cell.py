@@ -61,12 +61,13 @@ def areas_intersection(area_spot,area_celula):
     return area_iluminacion, area_electricidad
 
 def irradiance_cell(radio,dy,dx,AOI):    
+    area_elemento=0.16*10**-6
     cell_grid=circular_cell(radio, dy, dx)
     spot=gr.spot_grid(AOI)
     area_illum,area_elect=areas_intersection(spot,cell_grid)
-    illum=area_illum.sum()
-    elect=area_elect.sum()    
-    return illum
+    illum=area_illum.sum()*area_elemento
+    elect=area_elect.sum()*area_elemento 
+    return illum #En W se devuelve
 
 def function(desp,radio):
     irradiance_aoi_0=[]
@@ -160,32 +161,34 @@ def performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f
         irrad=0
     
     return irrad
-def from_irrad_to_ilum(irrad,area):
-    #Irrad está en W/m2
+def from_pot_to_lum(Pot_rad):
+    #Rad está en W
     #Area está en m2
-    Potencia_rad=irrad*area # W
-    Lumen=Potencia_rad*105 
-    Lux=irrad*105  
+    
+    Lumen=Pot_rad*105 
     return Lumen
 
-def from_ilum_to_irrad(Lumen,area):
+def from_rad_to_lum(Rad,area):
+    Lumen=Rad*105*area
+    return Lumen
+    
+def from_lum_to_pot(Lumen):
     #Area está en m2
-    irrad=Lumen/(105*area) #W/m2
-    lux=Lumen/area      
-    return irrad
+    Pot_rad=Lumen/105 #W
+    
+    return Pot_rad #W
 
 
-def adjust(illum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
+def adjust(lum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
     desp=0 
-    irrad_cte=from_ilum_to_irrad(illum_cte,area)
-    val_irrad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
-       
-    while val_irrad>irrad_cte:
-        desp=desp+0.01
-       
-        val_irrad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa
+    rad_cte=from_lum_to_pot(lum_cte)
+    val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area #W
+    
+    while val_rad>rad_cte:
+        desp=desp+0.01   
+        val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area
         
-    illum_out=from_irrad_to_ilum(val_irrad,area)
+    illum_out=from_pot_to_lum(val_rad)
         
     return desp,illum_out
 
