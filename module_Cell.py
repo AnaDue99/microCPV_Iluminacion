@@ -180,7 +180,7 @@ def from_lum_to_pot(Lumen):
 
 
 def adjust(lum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
-    desp=0 
+    desp=0
     rad_cte=from_lum_to_pot(lum_cte)
     val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area #W
     
