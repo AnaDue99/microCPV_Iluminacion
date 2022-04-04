@@ -4,16 +4,18 @@ Spyder Editor
 
 
 """
+#Librerías utilizadas en el modulo:
 import pandas as pd
 import numpy as np
 import module_AoiGrids as gr
 from scipy.interpolate import InterpolatedUnivariateSpline as interp
-
+#Tamaño grid reducido del spot. 
 sizex=201
 sizey=201
+
 ########################## FUNCIONES PRINCIPALES UTILIZADAS EN EL CODIGO##############
 
-                        ##DEFINICIÓN CELCULA RECTANGULAR##
+                        ##DEFINICIÓN CELULA RECTANGULAR##
 def rectangular_cell(l1,l2,desx,desy,precision=0.04):
     area=np.zeros((sizex, sizey),int)
     #han de ser valores como con mucho 0,04 mm de precision 
@@ -31,8 +33,7 @@ def rectangular_cell(l1,l2,desx,desy,precision=0.04):
 def circular_cell(r,desx,desy,precision=0.04):
     area=np.zeros((sizex, sizey),int)
     #han de ser valores como con mucho 0,04 mm de precision 
-    r=r/precision
-    
+    r=r/precision    
     x=desx/precision
     y=desy/precision 
     
@@ -45,30 +46,9 @@ def circular_cell(r,desx,desy,precision=0.04):
                 area[int(-i+y+sizey/2),int(-j+x+sizex/2)]=10
     return area
 
-  ##!!!!!!!!!! INTERSECCIÓN ÁREAS->Devuelve grid iluminación y electricidad##
-def areas_intersection(area_spot,area_celula):
-    area_iluminacion=np.zeros((sizex, sizey),float)
-    area_electricidad=np.zeros((sizex, sizey),float)
-    
-    for i in range(len(area_spot[0])):
-        for j in range(len(area_spot[0])):
-            if area_spot[i,j]>0 and area_celula[i,j]==10:  
-                area_electricidad[i,j]=area_spot[i,j]
-            elif area_spot[i,j]>0 and area_celula[i,j]==0:
-                area_iluminacion[i,j]=area_spot[i,j]
-    
-    
-    return area_iluminacion, area_electricidad
+ 
 
-def irradiance_cell(radio,dy,dx,AOI):    
-    area_elemento=0.16*10**-6
-    cell_grid=circular_cell(radio, dy, dx)
-    spot=gr.spot_grid(AOI)
-    area_illum,area_elect=areas_intersection(spot,cell_grid)
-    illum=area_illum.sum()*area_elemento
-    elect=area_elect.sum()*area_elemento 
-    return illum #En W se devuelve
-
+ ###DEFINICIÓN FUNCIONES DE LA IRRADIANCIA DEPENDIENDO DEL AOI Y EL DESP ###
 def function(desp,radio):
     irradiance_aoi_0=[]
     irradiance_aoi_5=[]
@@ -116,8 +96,7 @@ def function(desp,radio):
     return f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60
     
 
-
-    
+    #FUNCIÓN DE RENDIMIENTO PARA CADA CURVA ###
 def performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):    
     if aoi<2.5:
        irrad=f_0(desp)
@@ -161,8 +140,28 @@ def performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f
         irrad=0
     
     return irrad
+
+### FUNCIÓN QUE DADO UN VALOR DE ILUMINACIÓN Y UN AOI, AJUSTA EL DESPLAZAMIENTO REQUERIDO PARA ELLO ###
+
+def adjust(lum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
+    desp=0
+    rad_cte=from_lum_to_pot(lum_cte)
+    val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area #W
+    
+    while val_rad>rad_cte:
+        desp=desp+0.01   
+        val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area
+        
+    illum_out=from_pot_to_lum(val_rad)
+        
+    return desp,illum_out
+
+
+
+
+    ##### FUNCIONES PARA PASAR DE IRRADIANCIA A ILUMINACION Y VICEVERSA ####
 def from_pot_to_lum(Pot_rad):
-    #Rad está en W
+    #Pot_rad está en W
     #Area está en m2
     
     Lumen=Pot_rad*105 
@@ -179,19 +178,32 @@ def from_lum_to_pot(Lumen):
     return Pot_rad #W
 
 
-def adjust(lum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
-    desp=0
-    rad_cte=from_lum_to_pot(lum_cte)
-    val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area #W
+
+############# FUNCIONES UTILIZADAS EN LAS ANTERIORES #####################
+
+           ### DEVUELVE VALOR IRRADIANCIA PARA ILUMINACIÓN ###
+def irradiance_cell(radio,dy,dx,AOI):    
+    area_elemento=0.16*10**-6
+    cell_grid=circular_cell(radio, dy, dx)
+    spot=gr.spot_grid(AOI)
+    area_illum,area_elect=areas_intersection(spot,cell_grid)
+    illum=area_illum.sum()*area_elemento
+    elect=area_elect.sum()*area_elemento 
+    return illum #En W se devuelve
+
+        ## INTERSECCIÓN ÁREAS->Devuelve grid iluminación y electricidad##  
+def areas_intersection(area_spot,area_celula):
+    area_iluminacion=np.zeros((sizex, sizey),float)
+    area_electricidad=np.zeros((sizex, sizey),float)
     
-    while val_rad>rad_cte:
-        desp=desp+0.01   
-        val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area
-        
-    illum_out=from_pot_to_lum(val_rad)
-        
-    return desp,illum_out
-
-
+    for i in range(len(area_spot[0])):
+        for j in range(len(area_spot[0])):
+            if area_spot[i,j]>0 and area_celula[i,j]==10:  
+                area_electricidad[i,j]=area_spot[i,j]
+            elif area_spot[i,j]>0 and area_celula[i,j]==0:
+                area_iluminacion[i,j]=area_spot[i,j]
+    
+    
+    return area_iluminacion, area_electricidad
             
             

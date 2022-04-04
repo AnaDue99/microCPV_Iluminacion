@@ -4,20 +4,26 @@ Created on Sun Nov 28 15:42:49 2021
 
 @author: anadu
 """
-
+#Librerías utilizadas en el modulo:
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pvlib import location
 from pvlib import irradiance
-from scipy.interpolate import InterpolatedUnivariateSpline as interp
+
+
+#Tamaño grid reducido del spot. 
 sizex=201
 sizey=201
 
 ########################## FUNCIONES PRINCIPAL UTILIZADA EN EL CODIGO##############
+
+                        ### OBTENER GRID DE UN SPOT##
+## Función devuelve grid del spot para un aoi en concreto. Si no se conoce el grid
+## del aoi en concreto, se llama a una función que interpola entre los dos grids conocidos
 def spot_grid(aoi):
-    cte=1/0.00028
+    cte=1/0.00028 #Constante para conseguir entrada a la celula de 1000W/m2
                   
     if aoi <5:
         if aoi==0:
@@ -88,6 +94,8 @@ def spot_grid(aoi):
 
     return aoi_distribution*cte
 
+                               ### DIBUJAR SPOT##
+#Función para dibujar como heatmap el grid de un aoi con título.
 def plot_grid(title,aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
@@ -95,7 +103,9 @@ def plot_grid(title,aoi_distribution):
         plt.title(title)
         plt.show()
        
-
+                 ###DATOS IRRADIANCIA LOCALIACIÓN##
+#Función que recoge varias funciones de la libreria pvlib para conocer caracteristicas
+#de irradiancia del emplazamiento elegido basado en unas características
 
 def get_data_location(caracteristics,caracteristics_module,date):
     site = location.Location(caracteristics['lat'], 
@@ -135,13 +145,9 @@ def get_data_location(caracteristics,caracteristics_module,date):
                          'POA_tot':total_irrad['poa_global'],
                          'times':times})
 
-    
-
-
-
 #################### FUNCIONES UTILIZADAS EN LAS FUNCIONES ANTERIORES #################                                
 
-                                #### LECTURA CVS ###
+                                #### LECTURA CSV ###
 def read_csv(aoi):
     #Leemos del CSV los datos
    path = f"spots inso 29-Oct-2021\InsoPMMA_{aoi}deg\OptiMesh_{aoi}deg.csv"
@@ -152,7 +158,7 @@ def read_csv(aoi):
    return spot
 
                                 
-                            ###FUNCION CALCULA LA MATRIZ ###
+                            ###FUNCION CALCULA LA MATRIZ INTERPOLANDO ###
 def generic_spot_grid(x,xa,xb,aoi1,aoi2):     
     p1=aoi_half_point(aoi1)   
     p2=aoi_half_point(aoi2)                     
@@ -180,7 +186,8 @@ def generic_spot_grid(x,xa,xb,aoi1,aoi2):
 
     aoi_pedido=linear_interpolation(x, xa, xb, aoi3, aoi4)
     return aoi_pedido
-                            ###REDUCIMOS EL TAMAÑO ###
+
+                            ###REDUCIMOS EL TAMAÑO DEL GRID ###
 def reduce_(aoi):
     aoi_reduce=np.zeros((sizex, sizey),float)
     restx=(501-sizex)/2
@@ -189,7 +196,8 @@ def reduce_(aoi):
         for j in range(int(resty),int(501-resty),1):
             aoi_reduce[int(i-restx),int(j-resty)]=aoi[i,j]
     return aoi_reduce
-                          ####CALCULO PUNTO MAXIMO AOI ##
+
+                          ####CALCULO PUNTO MAXIMA IRRADIANCIA AOI ##
 def aoi_half_point(aoi):    
     max_=0
     for i in range(len(aoi[0])):
@@ -205,20 +213,12 @@ def aoi_half_point(aoi):
                 p_=np.array([i,j])
                 p=(p+p_)/2
     return p
-                                    ###INTERPOLACIÓN LINEAL ####
+
+                             ###INTERPOLACIÓN LINEAL ####
 def linear_interpolation(x,xa,xb,ya,yb):
     #x: valor AOI requiero, xa y xb valore que se tienen. 
     #ya yb son las matrices de los aoi que se tienen
     y=ya+(x-xa)*(yb-ya)/(xb-xa)
     return y 
 
-def interp_irrad_desp(desp,aoi,n1,n2,f1,f2):
-    irradiance_interp=[]
-    desp_2=[]   
-    for i in desp:
-        irradiance_interp.append(linear_interpolation(aoi,n1,n2,f1(i),f2(i)))   
-   
-            
-    f3=interp(desp_2,irradiance_interp,k=3)
-    return f3
 
