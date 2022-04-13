@@ -10,8 +10,8 @@ import numpy as np
 import module_AoiGrids as gr
 from scipy.interpolate import InterpolatedUnivariateSpline as interp
 #Tamaño grid reducido del spot. 
-sizex=201
-sizey=201
+sizex=356
+sizey=356
 
 ########################## FUNCIONES PRINCIPALES UTILIZADAS EN EL CODIGO##############
 
@@ -81,17 +81,17 @@ def function(desp,radio):
         
     f_0=interp(desp,irradiance_aoi_0,k=3)
     f_5=interp(desp,irradiance_aoi_5,k=3)
-    f_10=interp(desp,irradiance_aoi_10,k=3)
-    f_15=interp(desp,irradiance_aoi_15,k=3)
-    f_20=interp(desp,irradiance_aoi_20,k=3)
-    f_25=interp(desp,irradiance_aoi_25,k=3)
-    f_30=interp(desp,irradiance_aoi_30,k=3)
-    f_35=interp(desp,irradiance_aoi_35,k=3)
-    f_40=interp(desp,irradiance_aoi_40,k=3)
-    f_45=interp(desp,irradiance_aoi_45,k=3)
-    f_50=interp(desp,irradiance_aoi_50,k=3)
-    f_55=interp(desp,irradiance_aoi_55,k=3)
-    f_60=interp(desp,irradiance_aoi_60,k=3)
+    f_10=interp(desp+1.06,irradiance_aoi_10,k=3)
+    f_15=interp(desp+1.26,irradiance_aoi_15,k=3)
+    f_20=interp(desp+2.31,irradiance_aoi_20,k=3)
+    f_25=interp(desp+2.76,irradiance_aoi_25,k=3)
+    f_30=interp(desp+3.93,irradiance_aoi_30,k=3)
+    f_35=interp(desp+4.79,irradiance_aoi_35,k=3)
+    f_40=interp(desp+5.46,irradiance_aoi_40,k=3)
+    f_45=interp(desp+7.06,irradiance_aoi_45,k=3)
+    f_50=interp(desp+8.21,irradiance_aoi_50,k=3)
+    f_55=interp(desp+8.86,irradiance_aoi_55,k=3)
+    f_60=interp(desp+11.05,irradiance_aoi_60,k=3)
     
     return f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60
     
@@ -144,18 +144,20 @@ def performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f
 ### FUNCIÓN QUE DADO UN VALOR DE ILUMINACIÓN Y UN AOI, AJUSTA EL DESPLAZAMIENTO REQUERIDO PARA ELLO ###
 
 def adjust(lum_cte,aoi,area,directa,difusa,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60):
-    desp=0
+    desp=-2
     rad_cte=from_lum_to_pot(lum_cte)
     val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area #W
+    
     
     while val_rad>rad_cte:
         desp=desp+0.01   
         val_rad=performance_curve(desp,aoi,f_0,f_5,f_10,f_15,f_20,f_25,f_30,f_35,f_40,f_45,f_50,f_55,f_60)*directa+difusa*area
+    
+  
         
     illum_out=from_pot_to_lum(val_rad)
-        
+      
     return desp,illum_out
-
 
 
 

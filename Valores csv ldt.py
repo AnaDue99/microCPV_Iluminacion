@@ -14,13 +14,13 @@ import numpy as np
 
 
 
-path = f"28-Mar-2022\InsoPMMA_10deg\Intensity_10deg_0.csv"
+path = f"28-Mar-2022\InsoPMMA_10deg\Intensity_10deg_0p7.csv"
 Deg = pd.read_csv(path,index_col=0)
 
 Final=Deg*1000/0.006405
 deg=Deg.to_numpy()*1000/0.006405
 
-
+Final.to_excel("Distribuciones angulares.xlsx")
 
 print(deg.sum())
 

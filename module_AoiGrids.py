@@ -14,8 +14,8 @@ from pvlib import irradiance
 
 
 #Tamaño grid reducido del spot. 
-sizex=201
-sizey=201
+sizex=356
+sizey=356
 
 ########################## FUNCIONES PRINCIPAL UTILIZADA EN EL CODIGO##############
 
