@@ -5,7 +5,7 @@ Spyder Editor
 
 """
 #Librerías utilizadas en el modulo:
-import pandas as pd
+
 import numpy as np
 import module_AoiGrids as gr
 from scipy.interpolate import InterpolatedUnivariateSpline as interp

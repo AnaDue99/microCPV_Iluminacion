@@ -100,7 +100,7 @@ def plot_grid(title,aoi_distribution):
     #Resolucion es de 0.04 mm   
     with sns.axes_style("white"):
         sns.heatmap(aoi_distribution,vmin=0,  vmax=6, square=True,  cmap="YlGnBu_r")
-        plt.title(title)
+        plt.title(title,"W/m2")
         plt.show()
        
                  ###DATOS IRRADIANCIA LOCALIACIÓN##
